@@ -1,7 +1,7 @@
 "use client";
 import { RiAddCircleFill } from "react-icons/ri";
 
-import { useGetWorkspaces } from "@/app/features/worksapaces/api/use-get-workspaces";
+import { useGetWorkspaces } from "@/features/worksapaces/api/use-get-workspaces";
 
 export const WorkspaceSwitcher = () => {
   const { data } = useGetWorkspaces();
