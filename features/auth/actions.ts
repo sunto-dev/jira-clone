@@ -1,6 +1,8 @@
 import { cookies } from "next/headers";
-import { Account, Client } from "node-appwrite";
-import { AUTH_COOKIE } from "./constants";
+import { Databases, Client, Query, Account } from "node-appwrite";
+import { AUTH_COOKIE } from "@/features/auth/constants";
+
+import { DATABASE_ID, MEMBERS_ID, WORKSPACES_ID } from "@/config";
 
 export const getCurrent = async () => {
   try {
@@ -14,7 +16,6 @@ export const getCurrent = async () => {
 
     client.setSession(session.value);
     const account = new Account(client);
-
     return await account.get();
   } catch {
     return null;

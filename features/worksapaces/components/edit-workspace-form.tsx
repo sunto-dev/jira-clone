@@ -4,7 +4,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import { useRef } from "react";
 import { useForm } from "react-hook-form";
-import { createWorkspaceSchema } from "../schemas";
+import { UpdateWorkspaceSchema } from "../schemas";
 
 import {
   Form,
@@ -25,32 +25,40 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ImageIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { Workspace } from "../type";
 
-interface CreateWorkspaceFormProps {
+interface EditWorkspaceFormProps {
   onCancel?: () => void;
+  initiaValues: Workspace;
 }
 
-export const CreateWorkspaceForm = ({ onCancel }: CreateWorkspaceFormProps) => {
+export const CreateWorkspaceForm = ({
+  onCancel,
+  initiaValues,
+}: EditWorkspaceFormProps) => {
   const router = useRouter();
   const { mutate, isPending } = useCreateWorkspace();
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const form = useForm<z.infer<typeof createWorkspaceSchema>>({
-    resolver: zodResolver(createWorkspaceSchema),
+  const form = useForm<z.infer<typeof UpdateWorkspaceSchema>>({
+    resolver: zodResolver(UpdateWorkspaceSchema),
     defaultValues: {
-      name: "",
+      ...initiaValues,
+      imageUrl: initiaValues.imageUrl ?? "",
     },
   });
 
-  const onSubmit = (values: z.infer<typeof createWorkspaceSchema>) => {
+  const onSubmit = (values: z.infer<typeof UpdateWorkspaceSchema>) => {
     const finalValues = {
       ...values,
-      image: values.imageUrl instanceof File ? values.imageUrl : "",
+      image: values.imageUrl instanceof File ? values.imageUrl : undefined,
     };
 
     mutate(
-      { form: finalValues },
+      { form: finalValues 
+        param: { workspaceId: initiaValues.$id }
+      },
       {
         onSuccess: ({ data }) => {
           form.reset();
@@ -72,7 +80,7 @@ export const CreateWorkspaceForm = ({ onCancel }: CreateWorkspaceFormProps) => {
     <Card className="w-full h-full border-none shadow-none">
       <CardHeader className="flex p-7">
         <CardTitle className="text-xl font-bold">
-          Create a new workspaces
+          {initiaValues.name}
         </CardTitle>
       </CardHeader>
       <div className="px-7">
